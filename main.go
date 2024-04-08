@@ -189,7 +189,7 @@ func init() {
 		SendToLogfile: false,
 		Priority:      syslog.LOG_DEBUG,
 		SyslogTag:     "GOLOGGER",
-		CloseDelay:    500 * time.Millisecond,
+		CloseDelay:    time.Millisecond,
 	}
 
 	go L.daemon()
