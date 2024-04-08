@@ -20,6 +20,7 @@ type Log struct {
 	SendToStdout  bool
 	SendToSyslog  bool
 	SendToLogfile bool
+	CloseDelay    time.Duration
 }
 
 func (l *Log) daemon() {
@@ -169,6 +170,7 @@ func (l *Log) DBG(prompt string, v ...interface{}) {
 }
 
 func (l *Log) Close() {
+	time.Sleep(l.CloseDelay)
 	lenLogChan := len(l.logChan)
 	for lenLogChan > 0 {
 		time.Sleep(100 * time.Millisecond)
@@ -180,12 +182,14 @@ var L *Log
 
 func init() {
 	L = &Log{
-		logChan:       make(chan string, 1000),
+		logChan: make(chan string, 1000),
+
 		SendToStdout:  true, // The logger prints to stdout as a default, though can be easily changed.
 		SendToSyslog:  false,
 		SendToLogfile: false,
 		Priority:      syslog.LOG_DEBUG,
 		SyslogTag:     "GOLOGGER",
+		CloseDelay:    500 * time.Millisecond,
 	}
 
 	go L.daemon()
